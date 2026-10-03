@@ -1,16 +1,8 @@
-# Idan Malka Portfolio Website
+# gregos5.github.io
 
-This is a simple Jekyll-based portfolio site for showcasing embedded, robotics, and software projects.
+Personal page of Idan Malka. A single static `index.html` with inline CSS/JS, no theme and no build step.
 
-## How to use
-
-- Edit `index.md` to update your info or add new projects.
-- Push changes to your GitHub repository (named `gregos5.github.io` for user pages).
-- GitHub Pages will automatically build and host your site.
-
-## Local preview
-
-```sh
-bundle install
-bundle exec jekyll serve
-```
+- Edit `index.html` to update links, timeline, skills or projects.
+- The CV download lives at `assets/Idan_Malka_CV.pdf`.
+- Preview locally by opening `index.html` in a browser.
+- Push to `main` and GitHub Pages publishes it.
