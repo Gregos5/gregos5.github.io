@@ -34,6 +34,13 @@
 
   /* Header */
   header { text-align: center; margin-bottom: 32px; }
+  .avatar {
+    display: block; width: 112px; height: 112px; margin: 0 auto 22px;
+    border-radius: 50%;
+    object-fit: cover; object-position: 50% 40%;
+    border: 1px solid var(--metal);
+    outline: 1px solid var(--border); outline-offset: 4px;
+  }
   h1 {
     font: 600 26px/1.2 var(--mono);
     letter-spacing: .18em;
@@ -157,6 +164,7 @@
 <main>
 
   <header>
+    <img class="avatar" src="assets/profile.png" alt="Portrait of Idan Malka" width="112" height="112">
     <h1>IDAN MALKA</h1>
     <p class="role">Embedded Software Engineer · Robotics &amp; Control</p>
     <p class="loc">Norwich, UK · UK / EU / IL work permits</p>
