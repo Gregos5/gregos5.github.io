@@ -18,6 +18,7 @@
     --muted: #8a9bb3;
     --metal: #b8c2cc;
     --metal-grad: linear-gradient(135deg, #e3e8ee 0%, #8d99a6 50%, #c9d1d9 100%);
+    --ease: cubic-bezier(.2, .8, .2, 1);
     --mono: "JetBrains Mono", ui-monospace, Consolas, monospace;
     --sans: system-ui, -apple-system, "Segoe UI", Roboto, sans-serif;
   }
@@ -69,7 +70,7 @@
   h2::after { content: ""; flex: 1; height: 1px; background: var(--border); }
 
   /* Link buttons */
-  .links { display: grid; gap: 10px; }
+  .links, .phones { display: grid; gap: 10px; }
   .btn {
     display: flex; align-items: center; gap: 14px;
     padding: 14px 16px;
@@ -143,17 +144,63 @@
     background: var(--surface);
     border: 1px solid var(--border);
     border-left: 2px solid var(--metal);
+    cursor: pointer;
+    transition: border-color .15s, background .15s;
   }
-  a.card:hover { background: var(--surface-hi); border-color: var(--metal); }
+  .card:hover, .card.open { background: var(--surface-hi); border-color: var(--metal); }
   .card-top { display: flex; justify-content: space-between; align-items: baseline; gap: 10px; }
   .domain { font: 11px var(--mono); letter-spacing: .14em; text-transform: uppercase; color: var(--metal); }
   .tag { font: 11px var(--mono); color: var(--muted); white-space: nowrap; }
+  .chev {
+    display: inline-block; width: 6px; height: 6px; margin: 0 2px 0 10px;
+    border-right: 1px solid var(--metal); border-bottom: 1px solid var(--metal);
+    transform: translateY(-3px) rotate(45deg);
+    transition: transform .45s var(--ease);
+  }
+  .card.open .chev { transform: translateY(0) rotate(-135deg); }
   .card h3 { font-size: 15px; font-weight: 600; margin-top: 4px; }
+  .toggle {
+    background: none; border: 0; padding: 0;
+    font: inherit; color: inherit; text-align: left; cursor: pointer;
+  }
+  .toggle:focus-visible { outline: 1px solid var(--metal); outline-offset: 3px; }
   .card p { color: var(--muted); font-size: 13.5px; margin-top: 2px; }
+
+  .more { display: grid; grid-template-rows: 0fr; transition: grid-template-rows .45s var(--ease); }
+  .more-in {
+    min-height: 0; overflow: hidden;
+    visibility: hidden; opacity: 0; transform: translateY(-6px);
+    transition: opacity .2s, transform .45s var(--ease), visibility 0s .45s;
+  }
+  .card.open .more { grid-template-rows: 1fr; }
+  .card.open .more-in {
+    visibility: visible; opacity: 1; transform: none;
+    transition: opacity .35s .08s, transform .45s var(--ease), visibility 0s;
+  }
+  .more-in > * { margin-top: 12px; }
+  .card .more-in p { color: var(--text); }
+  .card ul { padding-left: 18px; font-size: 13.5px; }
+  .card li + li { margin-top: 4px; }
+  .shots { display: grid; grid-template-columns: 1fr 1fr; gap: 6px; }
+  .shots img {
+    display: block; width: 100%; height: auto;
+    aspect-ratio: 4 / 3; object-fit: cover;
+    background: var(--bg);
+  }
+  .shots.one { grid-template-columns: 1fr; }
+  .shots.one img { aspect-ratio: auto; }
+  .ext {
+    display: inline-block;
+    font: 12px var(--mono); color: var(--metal);
+    border-bottom: 1px solid var(--border);
+    transition: border-color .15s;
+  }
+  .ext:hover, .ext:focus-visible { border-color: var(--metal); outline: none; }
 
   footer { margin-top: 56px; text-align: center; font: 11px var(--mono); color: var(--muted); }
 
   @media (min-width: 520px) { .stop { flex-basis: 46%; } }
+  @media (min-width: 600px) { .phones { grid-template-columns: 1fr 1fr; } }
   @media (prefers-reduced-motion: reduce) {
     html { scroll-behavior: auto; }
     * { transition: none !important; }
@@ -164,10 +211,10 @@
 <main>
 
   <header>
-    <img class="avatar" src="assets/profile.png" alt="Portrait of Idan Malka" width="112" height="112">
+    <img class="avatar" src="assets/profile.webp" alt="Portrait of Idan Malka" width="112" height="112">
     <h1>IDAN MALKA</h1>
     <p class="role">Embedded Software Engineer · Robotics &amp; Control</p>
-    <p class="loc">Norwich, UK · UK / EU / IL work permits</p>
+    <p class="loc">UK / EU / IL work permits</p>
   </header>
 
   <nav class="links" aria-label="Contact and links">
@@ -175,6 +222,16 @@
       <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M17.5 14.4c-.3-.1-1.8-.9-2-1-.3-.1-.5-.1-.7.1-.2.3-.8 1-.9 1.2-.2.2-.3.2-.6.1-.3-.1-1.3-.5-2.4-1.5-.9-.8-1.5-1.8-1.7-2.1-.2-.3 0-.5.1-.6l.4-.5c.2-.2.2-.3.3-.5.1-.2 0-.4 0-.5l-.9-2.2c-.2-.6-.5-.5-.7-.5h-.6c-.2 0-.5.1-.8.4-.3.3-1 1-1 2.5s1.1 2.9 1.2 3.1c.1.2 2.1 3.2 5.1 4.5.7.3 1.3.5 1.7.6.7.2 1.4.2 1.9.1.6-.1 1.8-.7 2-1.4.2-.7.2-1.3.2-1.4-.1-.1-.3-.2-.6-.3zM12 2a10 10 0 0 0-8.6 15.1L2 22l5-1.3A10 10 0 1 0 12 2zm0 18.2c-1.5 0-3-.4-4.3-1.2l-.3-.2-3 .8.8-2.9-.2-.3A8.2 8.2 0 1 1 12 20.2z"/></svg>
       WhatsApp<span class="arrow">→</span>
     </a>
+    <div class="phones">
+      <a class="btn" href="tel:+972555075485">
+        <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M6.6 10.8a15.2 15.2 0 0 0 6.6 6.6l2.2-2.2a1 1 0 0 1 1-.25c1.1.37 2.3.57 3.6.57a1 1 0 0 1 1 1V20a1 1 0 0 1-1 1A17 17 0 0 1 3 4a1 1 0 0 1 1-1h3.5a1 1 0 0 1 1 1c0 1.25.2 2.45.57 3.57a1 1 0 0 1-.25 1L6.6 10.8z"/></svg>
+        IL +972 55 507 5485<span class="arrow">→</span>
+      </a>
+      <a class="btn" href="tel:+447508857384">
+        <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M6.6 10.8a15.2 15.2 0 0 0 6.6 6.6l2.2-2.2a1 1 0 0 1 1-.25c1.1.37 2.3.57 3.6.57a1 1 0 0 1 1 1V20a1 1 0 0 1-1 1A17 17 0 0 1 3 4a1 1 0 0 1 1-1h3.5a1 1 0 0 1 1 1c0 1.25.2 2.45.57 3.57a1 1 0 0 1-.25 1L6.6 10.8z"/></svg>
+        UK +44 7508 857384<span class="arrow">→</span>
+      </a>
+    </div>
     <a class="btn" href="mailto:idanmalka7@gmail.com">
       <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M3 5h18v14H3V5zm2 2v.5l7 4.5 7-4.5V7H5zm14 2.9-7 4.5-7-4.5V17h14V9.9z"/></svg>
       Email<span class="arrow">→</span>
@@ -197,10 +254,15 @@
     <h2 id="tl-h">Timeline</h2>
     <div class="tl-wrap">
       <ol class="timeline" id="timeline" style="list-style:none">
+        <li class="stop now">
+          <div class="when">2023 – now</div>
+          <div class="where">Norwich, UK</div>
+          <div class="what">Embedded software across automotive, aerospace &amp; energy.</div>
+        </li>
         <li class="stop">
-          <div class="when">— 2019</div>
-          <div class="where">Brussels, Belgium</div>
-          <div class="what">Grew up here. Diploma in advanced maths &amp; science.</div>
+          <div class="when">2022</div>
+          <div class="where">Tel Aviv, Israel</div>
+          <div class="what">R&amp;D internship: hardware test automation for a social robot.</div>
         </li>
         <li class="stop">
           <div class="when">2019 – 2023</div>
@@ -208,14 +270,9 @@
           <div class="what">MEng Mechatronic Engineering, First Class.</div>
         </li>
         <li class="stop">
-          <div class="when">2022</div>
-          <div class="where">Tel Aviv, Israel</div>
-          <div class="what">R&amp;D internship: hardware test automation for a social robot.</div>
-        </li>
-        <li class="stop now">
-          <div class="when">2023 – now</div>
-          <div class="where">Norwich, UK</div>
-          <div class="what">Embedded software across automotive, aerospace &amp; energy.</div>
+          <div class="when">— 2019</div>
+          <div class="where">Brussels, Belgium</div>
+          <div class="what">Grew up here. Diploma in advanced maths &amp; science.</div>
         </li>
       </ol>
       <div class="tl-nav">
@@ -252,26 +309,114 @@
   <section aria-labelledby="pr-h">
     <h2 id="pr-h">Projects</h2>
     <div class="projects">
-      <div class="card">
-        <div class="card-top"><span class="domain">Aerospace</span><span class="tag">C · FreeRTOS</span></div>
-        <h3>Satellite payload firmware</h3>
+      <article class="card">
+        <div class="card-top"><span class="domain">Aerospace</span><span class="tag">STM32 · FreeRTOS<span class="chev" aria-hidden="true"></span></span></div>
+        <h3><button type="button" class="toggle" aria-expanded="false" aria-controls="p-sat">Satellite payload firmware</button></h3>
         <p>Embedded software for experimental payloads on a UK satellite mission.</p>
-      </div>
-      <div class="card">
-        <div class="card-top"><span class="domain">Automotive</span><span class="tag">ISO 26262</span></div>
-        <h3>EV traction control</h3>
-        <p>Safety-critical anti-slip control for a heavy electric vehicle.</p>
-      </div>
-      <div class="card">
-        <div class="card-top"><span class="domain">Robotics</span><span class="tag">University</span></div>
-        <h3>Lab automation robot</h3>
+        <div class="more" id="p-sat"><div class="more-in">
+          <p>Payload firmware developed to ECSS standards, bare-metal and on FreeRTOS, with RS485, CAN, SPI and UART links and sensor fusion. Verified on a dedicated bench rig with logic analysers.</p>
+          <div class="shots one">
+            <img src="assets/proactsis_office.webp" alt="Idan at a desk with a logic analyser trace on screen" width="800" height="450" loading="lazy" decoding="async">
+          </div>
+          <div class="chips">
+            <span class="chip">STM32</span><span class="chip">FreeRTOS</span><span class="chip">C</span><span class="chip">C++</span>
+            <span class="chip">Bare-metal</span><span class="chip">RS485</span><span class="chip">CAN</span><span class="chip">SPI</span>
+            <span class="chip">UART</span><span class="chip">Sensor fusion</span><span class="chip">ECSS</span>
+            <span class="chip">Bench testing</span><span class="chip">Logic analysers</span>
+          </div>
+          <a class="ext" href="https://spaceeast.co.uk/proactsis-controls-embedded-software-technology-transfer-from-automotive-to-space/" target="_blank" rel="noopener">Featured on Space East →</a>
+        </div></div>
+      </article>
+      <article class="card">
+        <div class="card-top"><span class="domain">Automotive</span><span class="tag">ISO 26262<span class="chev" aria-hidden="true"></span></span></div>
+        <h3><button type="button" class="toggle" aria-expanded="false" aria-controls="p-ev">Vehicle electrification</button></h3>
+        <p>Converting heavy-duty and classic vehicles to electric drive.</p>
+        <div class="more" id="p-ev"><div class="more-in">
+          <ul>
+            <li>Implemented ISO 26262 anti-slip traction control, cutting slippage by 90% on a 25 t EV.</li>
+            <li>Planned all on-site testing at the MIRA test tracks, balancing safety, time, resources and budget.</li>
+            <li>Inverter control strategy and BMS integration for CCS2 charging.</li>
+            <li>UDS diagnostics on a classic vehicle conversion.</li>
+          </ul>
+          <div class="chips">
+            <span class="chip">Model-based design</span><span class="chip">Simulink</span>
+            <span class="chip">ISO 26262</span><span class="chip">MISRA C</span>
+          </div>
+        </div></div>
+      </article>
+      <article class="card">
+        <div class="card-top"><span class="domain">Energy</span><span class="tag">Python · Modbus<span class="chev" aria-hidden="true"></span></span></div>
+        <h3><button type="button" class="toggle" aria-expanded="false" aria-controls="p-bess">Battery energy storage system</button></h3>
+        <p>Control strategy development for a battery storage system with high-power inverters.</p>
+        <div class="more" id="p-bess"><div class="more-in">
+          <ul>
+            <li>Developed a re-usable module that controls up to 24 high-performance Tesla 3-phase power converters simultaneously over CAN.</li>
+            <li>Architected the software and documented the system's entire electrical and electronic architecture.</li>
+          </ul>
+          <div class="chips">
+            <span class="chip">Raspberry Pi 5</span><span class="chip">Linux</span><span class="chip">Python</span>
+            <span class="chip">OOP</span><span class="chip">Multithreading</span><span class="chip">CAN</span>
+            <span class="chip">Modbus</span><span class="chip">Signal analysis</span>
+          </div>
+        </div></div>
+      </article>
+      <article class="card">
+        <div class="card-top"><span class="domain">Robotics</span><span class="tag">University<span class="chev" aria-hidden="true"></span></span></div>
+        <h3><button type="button" class="toggle" aria-expanded="false" aria-controls="p-lab">Lab automation robot</button></h3>
         <p>Modular control system for a chemical-synthesis cabinet. Best group project of the year.</p>
-      </div>
-      <a class="card" href="https://github.com/Gregos5/Dynamic-manipulator-GUI-2-DOF" target="_blank" rel="noopener">
-        <div class="card-top"><span class="domain">Simulation</span><span class="tag">GitHub →</span></div>
-        <h3>2-DOF robotic arm</h3>
-        <p>Inverse kinematics and PID tuning visualiser.</p>
-      </a>
+        <div class="more" id="p-lab"><div class="more-in">
+          <ul>
+            <li>Software lead in a team of 7; built the human–machine interface.</li>
+            <li>Implemented a serial protocol between the base unit and core system to drive Arduino-controlled hardware: peristaltic pumps, valves, magnetic mixers and sensors.</li>
+            <li>Designed flow-control hardware, including a non-invasive 3-way valve (Fusion 360).</li>
+          </ul>
+          <div class="shots">
+            <img src="assets/reactor_project.webp" alt="Acrylic chemical-synthesis cabinet with coloured beakers" width="779" height="543" loading="lazy" decoding="async">
+            <img src="assets/reactor_distribute_module.webp" alt="Distribution module of the lab automation robot" width="800" height="600" loading="lazy" decoding="async">
+          </div>
+          <div class="chips">
+            <span class="chip">C++</span><span class="chip">Python</span><span class="chip">Bare-metal C++</span>
+            <span class="chip">Custom UART protocol</span><span class="chip">HMI</span><span class="chip">Arduino</span>
+            <span class="chip">Fusion 360</span><span class="chip">3D printing</span><span class="chip">Robotics</span>
+          </div>
+        </div></div>
+      </article>
+      <article class="card">
+        <div class="card-top"><span class="domain">Outreach</span><span class="tag">Volunteering<span class="chev" aria-hidden="true"></span></span></div>
+        <h3><button type="button" class="toggle" aria-expanded="false" aria-controls="p-gp">Greenpower EV mentoring</button></h3>
+        <p>Mentored ~30 students (aged 8–16) at Ormiston Victoria Academy for an electric car race.</p>
+        <div class="more" id="p-gp"><div class="more-in">
+          <p>Every Wednesday after classes, I taught electronics, software and control strategy to help the team get more out of the battery in their custom-built EV ahead of a 3-lap race. Together we defined requirements and built an automated 12 V battery-care rig: voltage and current sensing, Arduino control, relays and metal-clad dissipation resistors.</p>
+          <div class="shots">
+            <img src="assets/volunteering_battery_cycle_rig.webp" alt="Students' 12 V battery-care rig" width="800" height="647" loading="lazy" decoding="async">
+            <img src="assets/volunteering_battery_cycle_rig3.webp" alt="Battery-care rig with relays, Arduino Nano and LCD showing 12.7 V" width="800" height="822" loading="lazy" decoding="async">
+          </div>
+          <div class="chips">
+            <span class="chip">Electronic design</span><span class="chip">Mentoring</span><span class="chip">Communication</span>
+            <span class="chip">Arduino</span><span class="chip">Bare-metal C</span>
+          </div>
+          <a class="ext" href="https://www.greenpower.co.uk/" target="_blank" rel="noopener">Greenpower Education Trust →</a>
+        </div></div>
+      </article>
+      <article class="card">
+        <div class="card-top"><span class="domain">Simulation</span><span class="tag">Sep 21 – Jun 22<span class="chev" aria-hidden="true"></span></span></div>
+        <h3><button type="button" class="toggle" aria-expanded="false" aria-controls="p-arm">Controlled dynamic planar manipulator</button></h3>
+        <p>Real-time dynamic simulation of a two-link manipulator on a custom interface. University of Manchester.</p>
+        <div class="more" id="p-arm"><div class="more-in">
+          <ul>
+            <li>Introduces undergraduates to numerical analysis, control systems and inverse kinematics in an entertaining way, by making engineering principles accessible.</li>
+            <li>Visually compares ODE solvers and shows how PID tuning affects the system.</li>
+          </ul>
+          <div class="shots one">
+            <img src="assets/double_pendulum.webp" alt="Animated 2-DOF arm simulation" width="800" height="412" loading="lazy" decoding="async">
+          </div>
+          <div class="chips">
+            <span class="chip">Python</span><span class="chip">Numerical analysis</span>
+            <span class="chip">PID control</span><span class="chip">Inverse kinematics</span>
+          </div>
+          <a class="ext" href="https://github.com/Gregos5/Dynamic-manipulator-GUI-2-DOF" target="_blank" rel="noopener">View on GitHub →</a>
+        </div></div>
+      </article>
     </div>
   </section>
 
@@ -286,6 +431,23 @@
       b.addEventListener('click', function () {
         var step = tl.querySelector('.stop').offsetWidth;
         tl.scrollBy({ left: step * Number(b.dataset.dir), behavior: reduce ? 'auto' : 'smooth' });
+      });
+    });
+
+    document.querySelectorAll('.card').forEach(function (card) {
+      var btn = card.querySelector('.toggle');
+      // Start fetching a card's images as soon as the user shows intent to open it.
+      function warm() {
+        card.querySelectorAll('img[loading="lazy"]').forEach(function (img) { img.loading = 'eager'; });
+      }
+      card.addEventListener('pointerenter', warm, { once: true });
+      card.addEventListener('focusin', warm, { once: true });
+      card.addEventListener('click', function (e) {
+        if (e.target.closest('a')) return;
+        if (String(window.getSelection())) return; // let people select text without toggling
+        var open = card.classList.toggle('open');
+        btn.setAttribute('aria-expanded', open);
+        warm();
       });
     });
   })();
